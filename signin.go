@@ -22,7 +22,7 @@ var Db *sql.DB
 func initDatabase() {
 	var err error
 	// Db, err = sql.Open("mysql", "root@/bookmarks_db")
-	Db, err = sql.Open("mysql", "usb4qllzicum66zz:wyleAL0rYiBw5vdNEE6@/bcxxphn9v")
+	Db, err = sql.Open("mysql", "usb4qllzicum66zz:wyleAL0rYiBw5vdNEE6@tcp(bcxxphn9v-mysql.services.clever-cloud.com:3306)/bcxxphn9v")
 
 	// Db := mysql.New("tcp",
 	// 	"",

@@ -228,10 +228,11 @@ func main() {
 	files := http.FileServer(http.Dir("public"))
 	http.Handle("/static/", http.StripPrefix("/static", files))
 
-	http.HandleFunc("/", index)
-	http.HandleFunc("/login", login)
-	http.HandleFunc("/signup", signup)
-	http.HandleFunc("/logout", logout)
+	mux := http.NewServeMux()
+	mux.Handler("/", index)
+	mux.Handler("/login", login)
+	mux.Handler("/signup", signup)
+	mux.Handler("/logout", logout)
 
 	http.ListenAndServe(":8080", nil)
 	// server.ListenAndServe()

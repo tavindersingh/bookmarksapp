@@ -229,10 +229,10 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static", files))
 
 	mux := http.NewServeMux()
-	mux.Handler("/", index)
-	mux.Handler("/login", login)
-	mux.Handler("/signup", signup)
-	mux.Handler("/logout", logout)
+	mux.HandleFunc("/", index)
+	mux.HandleFunc("/login", login)
+	mux.HandleFunc("/signup", signup)
+	mux.HandleFunc("/logout", logout)
 
 	http.ListenAndServe(":8080", nil)
 	// server.ListenAndServe()

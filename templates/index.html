@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bookmarks</title>
+    <link href="/static/css/reset.css" rel="stylesheet">
+    <style>
+        body {
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+    </style>
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+<nav class="header">
+    <div class="logo">
+        <h1>Bookmarks</h1>
+    </div>
+    <div class="user_action">
+        <a href="login">Login</a><span>/</span><a href="logout">Logout</a>
+    </div>
+</nav>
+
+<div class="jumbotron">
+    <div id="form">
+        <form method="post" action="/">
+            <label>Title</label><br>
+            <input type="text" name="title"><br>
+            <label>Address</label><br>
+            <input type="text" name="address"><br>
+            <label>Description</label><br>
+            <textarea name="description"></textarea><br>
+            <div class="buttons">
+                <input type="submit" id="submit" value="Save">
+                <input type="button" id="reset" value="Reset">
+            </div>
+        </form>
+    </div>
+</div>
+
+<table>
+    <tr>
+        <th>
+            <p>Title</p>
+        </th>
+        <th>
+            <p>Address</p>
+        </th>
+    </tr>
+    {{ range .NewSlice }}
+    <tr class="item">
+        <td class="title">
+            <p><a href="//{{.Address}}" target="_blank">{{ .Title }}</a></p>
+        </td>
+        <td class="address">
+            <p>
+                <a href="//{{.Address}}" target="_blank">{{ .Address }}</a>
+                <span>
+                        <!--<img src="/static/img/Star Filled_48px.png">-->
+                        <img src="/static/img/Trash_48px.png">
+                </span>
+            </p>
+        </td>
+    </tr>
+    {{ end }}
+</table>
+
+<div class="pagination">
+    <ul>
+        <li><a href="#">&laquo;</a></li>
+        {{ range .TotalPages }}
+        <li><a href="/?page={{.}}">{{ . }}</a></li>
+        {{ end }}
+        <li><a href="#">&raquo;</a></li>
+    </ul>
+</div>
+
+<script src="/static/js/jquery-2.1.1.min.js"></script>
+<script src="/static/js/index.js"></script>
+</body>
+
+</html>

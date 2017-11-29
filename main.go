@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"strconv"
 	_ "golang.org/x/tools/cmd/getgo/server"
-	"os"
 )
 
 type Bookmarks struct {

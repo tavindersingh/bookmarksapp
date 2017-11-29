@@ -237,7 +237,7 @@ func main() {
 
 	// http.ListenAndServe(":3001", nil)
 	server := &http.Server{
-		Addr:    ":3001",
+		Addr:    ":8080",
 		Handler: mux,
 	}
 	server.ListenAndServe()

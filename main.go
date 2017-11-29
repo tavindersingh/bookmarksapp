@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
-	"time"
-	"fmt"
 	"strconv"
+	"time"
+
 	_ "golang.org/x/tools/cmd/getgo/server"
 )
 
@@ -38,7 +39,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 	emailCookie, cookieError := r.Cookie("email")
 
-	if cookieError == nil{
+	if cookieError == nil {
 		rows, err := loadBookmarks(emailCookie.Value)
 		if err != nil {
 			panic(err)
@@ -72,16 +73,16 @@ func index(w http.ResponseWriter, r *http.Request) {
 				if err != nil {
 					fmt.Println(err)
 				}
-				if ((index * 5) < int64(len(bookmarkSlice))) {
-					newBookmarkSlice = bookmarkSlice[(index - 1) * 5 : (index * 5)]
+				if (index * 5) < int64(len(bookmarkSlice)) {
+					newBookmarkSlice = bookmarkSlice[(index-1)*5 : (index * 5)]
 				} else {
-					newBookmarkSlice = bookmarkSlice[(index - 1) * 5 : ]
+					newBookmarkSlice = bookmarkSlice[(index-1)*5:]
 				}
 			}
 			//tmpl.Execute(w, newBookmarkSlice)
 			sendData := SendBookmarksData{
-				NewSlice: newBookmarkSlice,
-				TotalPages: totalPages(len(bookmarkSlice) / 5 + 1),
+				NewSlice:   newBookmarkSlice,
+				TotalPages: totalPages(len(bookmarkSlice)/5 + 1),
 			}
 			fmt.Println(sendData.NewSlice)
 			tmpl.Execute(w, sendData)
@@ -102,17 +103,17 @@ func index(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(err)
 			}
 
-			if ((index * 5) < int64(len(bookmarkSlice))) {
-				newBookmarkSlice = bookmarkSlice[(index - 1) * 5 : (index * 5) - 1]
+			if (index * 5) < int64(len(bookmarkSlice)) {
+				newBookmarkSlice = bookmarkSlice[(index-1)*5 : (index*5)-1]
 			} else {
-				newBookmarkSlice = bookmarkSlice[(index - 1) * 5 : ]
+				newBookmarkSlice = bookmarkSlice[(index-1)*5:]
 			}
 		}
 		//fmt.Println(newBookmarkSlice)
 		//tmpl.Execute(w, newBookmarkSlice)
 		sendData := SendBookmarksData{
-			NewSlice: newBookmarkSlice,
-			TotalPages: totalPages(len(bookmarkSlice) / 5 + 1),
+			NewSlice:   newBookmarkSlice,
+			TotalPages: totalPages(len(bookmarkSlice)/5 + 1),
 		}
 		fmt.Println(sendData.NewSlice)
 		tmpl.Execute(w, sendData)
@@ -123,7 +124,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 	// india, _ := time.LoadLocation(timeZoneIdentifierForIndia)
 	// fmt.Println(t.UTC())
 	// fmt.Println(t.In(india))
-
 
 	// fmt.Println(bookmarkSlice)
 	//tmpl.Execute(w, bookmarkSlice)
@@ -150,13 +150,13 @@ func login(w http.ResponseWriter, r *http.Request) {
 	if user.Password == selectAccount(user.Email) && user.Password != "" {
 		expiration := time.Now().Add(365 * 24 * time.Hour)
 		emailCookie := http.Cookie{
-			Name: "email",
-			Value: user.Email,
+			Name:    "email",
+			Value:   user.Email,
 			Expires: expiration,
 		}
 		passwordCookie := http.Cookie{
-			Name: "password",
-			Value: user.Password,
+			Name:    "password",
+			Value:   user.Password,
 			Expires: expiration,
 		}
 		http.SetCookie(w, &emailCookie)
@@ -169,7 +169,7 @@ func totalPages(n int) (num []int) {
 	var i int
 	num = make([]int, n)
 	for i = 0; i < n; i++ {
-		num[i] = i + 1;
+		num[i] = i + 1
 	}
 	return
 }
@@ -198,20 +198,20 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	confirmEmailCookie, _ := r.Cookie("email")
 	confirmPasswordCookie, _ := r.Cookie("password")
 	emailCookie := http.Cookie{
-		Name: "email",
-		Value: confirmEmailCookie.Value,
+		Name:    "email",
+		Value:   confirmEmailCookie.Value,
 		Expires: time.Now(),
 	}
 	passwordCookie := http.Cookie{
-		Name: "password",
-		Value: confirmPasswordCookie.Value,
-		Expires:time.Now(),
+		Name:    "password",
+		Value:   confirmPasswordCookie.Value,
+		Expires: time.Now(),
 	}
 
 	http.SetCookie(w, &emailCookie)
 	http.SetCookie(w, &passwordCookie)
 
-	http.Redirect(w, r, "/login", http.StatusSeeOther);
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
 func main() {
@@ -225,15 +225,20 @@ func main() {
 
 	initDatabase()
 
-	files := http.FileServer(http.Dir("public"))
-	http.Handle("/static/", http.StripPrefix("/static", files))
-
 	mux := http.NewServeMux()
+
+	files := http.FileServer(http.Dir("public"))
+	mux.Handle("/static/", http.StripPrefix("/static", files))
+
 	mux.HandleFunc("/", index)
 	mux.HandleFunc("/login", login)
 	mux.HandleFunc("/signup", signup)
 	mux.HandleFunc("/logout", logout)
 
-	http.ListenAndServe(":8080", nil)
-	// server.ListenAndServe()
+	// http.ListenAndServe(":3001", nil)
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: mux,
+	}
+	server.ListenAndServe()
 }
